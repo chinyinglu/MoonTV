@@ -32,12 +32,11 @@ body {
 html:not(.dark) body {
   background: linear-gradient(
     180deg,
-    #e6f3fb 0%,
-    #eaf3f7 18%,
-    #f7f7f3 38%,
-    #e9ecef 60%,
-    #dbe3ea 80%,
-    #d3dde6 100%
+    #f8f9fc 0%,
+    #f0f2f8 25%,
+    #e8ecf5 50%,
+    #f2f4f9 75%,
+    #f8f9fc 100%
   );
   background-attachment: fixed;
 }

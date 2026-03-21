@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="nebulaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 背景圆 -->
+  <circle cx="50" cy="50" r="45" fill="url(#nebulaGrad)" filter="url(#glow)"/>
+
+  <!-- 星星点缀 -->
+  <circle cx="25" cy="30" r="2" fill="white" opacity="0.9"/>
+  <circle cx="70" cy="25" r="1.5" fill="white" opacity="0.8"/>
+  <circle cx="75" cy="65" r="2.5" fill="white" opacity="0.85"/>
+  <circle cx="30" cy="75" r="1.5" fill="white" opacity="0.75"/>
+  <circle cx="50" cy="20" r="1" fill="white" opacity="0.7"/>
+  <circle cx="80" cy="45" r="1" fill="white" opacity="0.6"/>
+
+  <!-- N 字母 -->
+  <text x="50" y="65" font-family="system-ui, -apple-system, sans-serif" font-size="42" font-weight="700" fill="white" text-anchor="middle" style="letter-spacing: -2px">N</text>
+</svg>
