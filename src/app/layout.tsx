@@ -26,8 +26,22 @@ export async function generateMetadata(): Promise<Metadata> {
     description: '探索无限影视宇宙',
     manifest: '/manifest.json',
     icons: {
-      icon: [{ url: '/favicon.svg?v=3', type: 'image/svg+xml' }],
-      shortcut: '/favicon.svg?v=3',
+      icon: [
+        { url: '/favicon.svg?v=4', type: 'image/svg+xml' },
+        {
+          url: '/favicon.png?v=4',
+          type: 'image/png',
+          sizes: '64x64',
+        },
+      ],
+      shortcut: '/favicon.ico?v=4',
+      apple: [
+        {
+          url: '/icons/apple-touch-icon.png?v=4',
+          type: 'image/png',
+          sizes: '180x180',
+        },
+      ],
     },
   };
 }
