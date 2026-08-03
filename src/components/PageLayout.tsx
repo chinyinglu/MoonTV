@@ -1,4 +1,4 @@
-import { BackButton } from './BackButton';
+﻿import { BackButton } from './BackButton';
 import { LogoutButton } from './LogoutButton';
 import MobileBottomNav from './MobileBottomNav';
 import MobileHeader from './MobileHeader';
@@ -12,39 +12,35 @@ interface PageLayoutProps {
 }
 
 const PageLayout = ({ children, activePath = '/' }: PageLayoutProps) => {
-  return (
-    <div className='w-full min-h-screen'>
-      {/* 移动端头部 */}
-      <MobileHeader showBackButton={['/play'].includes(activePath)} />
+  const showBackButton = ['/play', '/detail'].includes(activePath);
 
-      {/* 主要布局容器 */}
-      <div className='flex md:grid md:grid-cols-[auto_1fr] w-full min-h-screen md:min-h-auto'>
-        {/* 侧边栏 - 桌面端显示，移动端隐藏 */}
-        <div className='hidden md:block'>
+  return (
+    <div className='app-shell relative min-h-screen w-full overflow-x-clip'>
+      <MobileHeader showBackButton={showBackButton} />
+
+      <div className='flex min-h-screen w-full md:grid md:grid-cols-[auto_1fr]'>
+        <div className='hidden md:contents'>
           <Sidebar activePath={activePath} />
         </div>
 
-        {/* 主内容区域 */}
-        <div className='relative min-w-0 flex-1 transition-all duration-300'>
-          {/* 桌面端左上角返回按钮 */}
-          {['/play'].includes(activePath) && (
-            <div className='absolute top-3 left-1 z-20 hidden md:flex'>
-              <BackButton />
+        <div className='relative min-w-0 flex-1'>
+          <div className='pointer-events-none fixed left-0 right-0 top-0 z-40 hidden h-20 md:block'>
+            {showBackButton && (
+              <div className='desktop-back pointer-events-auto absolute top-4 transition-[left] duration-500'>
+                <BackButton />
+              </div>
+            )}
+            <div className='pointer-events-auto absolute right-5 top-4 flex items-center gap-2'>
+              <SettingsButton />
+              <LogoutButton />
+              <ThemeToggle />
             </div>
-          )}
-
-          {/* 桌面端顶部按钮 */}
-          <div className='absolute top-2 right-4 z-20 hidden md:flex items-center gap-2'>
-            <SettingsButton />
-            <LogoutButton />
-            <ThemeToggle />
           </div>
 
-          {/* 主内容 */}
           <main
-            className='flex-1 md:min-h-0 mb-14 md:mb-0'
+            className='min-h-screen pb-20 md:pb-8'
             style={{
-              paddingBottom: 'calc(3.5rem + env(safe-area-inset-bottom))',
+              paddingBottom: 'calc(4.5rem + env(safe-area-inset-bottom))',
             }}
           >
             {children}
@@ -52,7 +48,6 @@ const PageLayout = ({ children, activePath = '/' }: PageLayoutProps) => {
         </div>
       </div>
 
-      {/* 移动端底部导航 */}
       <div className='md:hidden'>
         <MobileBottomNav activePath={activePath} />
       </div>

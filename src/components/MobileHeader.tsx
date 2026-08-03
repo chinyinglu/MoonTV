@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 
@@ -15,29 +15,35 @@ interface MobileHeaderProps {
 const MobileHeader = ({ showBackButton = false }: MobileHeaderProps) => {
   const { siteName } = useSite();
   return (
-    <header className='md:hidden relative w-full bg-white/70 backdrop-blur-xl border-b border-gray-200/50 shadow-sm dark:bg-gray-900/70 dark:border-gray-700/50'>
-      <div className='h-12 flex items-center justify-between px-4'>
-        {/* 左侧：返回按钮和设置按钮 */}
-        <div className='flex items-center gap-2'>
-          {showBackButton && <BackButton />}
-          <SettingsButton />
+    <header className='glass-panel sticky top-0 z-[550] w-full rounded-none border-x-0 border-t-0 md:hidden'>
+      <div className='flex h-14 items-center justify-between px-3'>
+        <div className='flex items-center gap-1'>
+          {showBackButton ? <BackButton /> : <SettingsButton />}
         </div>
-
-        {/* 右侧按钮 */}
-        <div className='flex items-center gap-2'>
+        <Link
+          href='/'
+          className='absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2'
+        >
+          <span
+            className='flex h-7 w-7 items-center justify-center rounded-full text-[10px] font-black'
+            style={{
+              background: 'var(--inverse)',
+              color: 'var(--inverse-text)',
+            }}
+          >
+            {siteName.trim().slice(0, 1).toUpperCase()}
+          </span>
+          <span
+            className='max-w-[150px] truncate text-sm font-bold tracking-[-0.03em]'
+            style={{ color: 'var(--text)' }}
+          >
+            {siteName}
+          </span>
+        </Link>
+        <div className='flex items-center gap-1'>
           <LogoutButton />
           <ThemeToggle />
         </div>
-      </div>
-
-      {/* 中间：Logo（绝对居中） */}
-      <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
-        <Link
-          href='/'
-          className='text-2xl font-bold text-green-600 tracking-tight hover:opacity-80 transition-opacity'
-        >
-          {siteName}
-        </Link>
       </div>
     </header>
   );

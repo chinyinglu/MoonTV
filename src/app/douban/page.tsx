@@ -1,4 +1,4 @@
-/* eslint-disable no-console,react-hooks/exhaustive-deps */
+﻿/* eslint-disable no-console,react-hooks/exhaustive-deps */
 
 'use client';
 
@@ -262,21 +262,21 @@ function DoubanPageClient() {
 
   return (
     <PageLayout activePath={getActivePath()}>
-      <div className='px-4 sm:px-10 py-4 sm:py-8 overflow-visible'>
+      <div className='mx-auto max-w-[1480px] px-4 py-8 sm:px-10 sm:py-12'>
         {/* 页面标题和选择器 */}
-        <div className='mb-6 sm:mb-8 space-y-4 sm:space-y-6'>
+        <div className='mb-10 space-y-6'>
           {/* 页面标题 */}
           <div>
-            <h1 className='text-2xl sm:text-3xl font-bold text-gray-800 mb-1 sm:mb-2 dark:text-gray-200'>
+            <h1 className='ui-heading text-4xl sm:text-6xl'>
               {getPageTitle()}
             </h1>
-            <p className='text-sm sm:text-base text-gray-600 dark:text-gray-400'>
+            <p className='ui-muted mt-3 text-sm sm:text-base'>
               来自豆瓣的精选内容
             </p>
           </div>
 
           {/* 选择器组件 */}
-          <div className='bg-white/60 dark:bg-gray-800/40 rounded-2xl p-4 sm:p-6 border border-gray-200/30 dark:border-gray-700/30 backdrop-blur-sm'>
+          <div className='glass-panel rounded-[1.5rem] p-4 sm:p-6'>
             <DoubanSelector
               type={type as 'movie' | 'tv' | 'show'}
               primarySelection={primarySelection}
@@ -288,7 +288,7 @@ function DoubanPageClient() {
         </div>
 
         {/* 内容展示区域 */}
-        <div className='max-w-[95%] mx-auto mt-8 overflow-visible'>
+        <div className='mx-auto mt-8 max-w-[1380px]'>
           {/* 内容网格 */}
           <div className='grid grid-cols-3 gap-x-2 gap-y-12 px-0 sm:px-2 sm:grid-cols-[repeat(auto-fit,minmax(160px,1fr))] sm:gap-x-8 sm:gap-y-20'>
             {loading || !selectorsReady
@@ -324,7 +324,10 @@ function DoubanPageClient() {
             >
               {isLoadingMore && (
                 <div className='flex items-center gap-2'>
-                  <div className='animate-spin rounded-full h-6 w-6 border-b-2 border-green-500'></div>
+                  <div
+                    className='h-6 w-6 animate-spin rounded-full border border-current border-t-transparent'
+                    style={{ color: 'var(--text)' }}
+                  ></div>
                   <span className='text-gray-600'>加载中...</span>
                 </div>
               )}

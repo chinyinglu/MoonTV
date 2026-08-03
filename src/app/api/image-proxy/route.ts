@@ -2,7 +2,31 @@ import { NextResponse } from 'next/server';
 
 export const runtime = 'edge';
 
-// OrionTV 兼容接口
+const PRIVATE_HOST_PATTERNS = [
+  /^localhost$/i,
+  /^127\./,
+  /^10\./,
+  /^192\.168\./,
+  /^169\.254\./,
+  /^0\./,
+  /^\[?::1\]?$/,
+  /^\[?fc/i,
+  /^\[?fd/i,
+];
+
+function isSafeImageUrl(value: string): URL | null {
+  try {
+    const url = new URL(value);
+    if (!['http:', 'https:'].includes(url.protocol)) return null;
+    if (PRIVATE_HOST_PATTERNS.some((pattern) => pattern.test(url.hostname))) {
+      return null;
+    }
+    return url;
+  } catch {
+    return null;
+  }
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const imageUrl = searchParams.get('url');
@@ -11,10 +35,17 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Missing image URL' }, { status: 400 });
   }
 
+  const targetUrl = isSafeImageUrl(imageUrl);
+  if (!targetUrl) {
+    return NextResponse.json({ error: 'Invalid image URL' }, { status: 400 });
+  }
+
   try {
-    const imageResponse = await fetch(imageUrl, {
+    const imageResponse = await fetch(targetUrl, {
+      redirect: 'follow',
       headers: {
-        Referer: 'https://movie.douban.com/',
+        Accept: 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
+        Referer: `${targetUrl.protocol}//${targetUrl.host}/`,
         'User-Agent':
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
       },
@@ -27,7 +58,13 @@ export async function GET(request: Request) {
       );
     }
 
-    const contentType = imageResponse.headers.get('content-type');
+    const contentType = imageResponse.headers.get('content-type') || '';
+    if (!contentType.toLowerCase().startsWith('image/')) {
+      return NextResponse.json(
+        { error: 'Upstream response is not an image' },
+        { status: 415 }
+      );
+    }
 
     if (!imageResponse.body) {
       return NextResponse.json(
@@ -36,23 +73,18 @@ export async function GET(request: Request) {
       );
     }
 
-    // 创建响应头
     const headers = new Headers();
-    if (contentType) {
-      headers.set('Content-Type', contentType);
-    }
+    headers.set('Content-Type', contentType);
+    headers.set('X-Content-Type-Options', 'nosniff');
+    headers.set('Cache-Control', 'public, max-age=86400, s-maxage=2592000');
+    headers.set('CDN-Cache-Control', 'public, s-maxage=2592000');
+    headers.set('Vercel-CDN-Cache-Control', 'public, s-maxage=2592000');
 
-    // 设置缓存头（可选）
-    headers.set('Cache-Control', 'public, max-age=15720000, s-maxage=15720000'); // 缓存半年
-    headers.set('CDN-Cache-Control', 'public, s-maxage=15720000');
-    headers.set('Vercel-CDN-Cache-Control', 'public, s-maxage=15720000');
-
-    // 直接返回图片流
     return new Response(imageResponse.body, {
       status: 200,
       headers,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Error fetching image' },
       { status: 500 }

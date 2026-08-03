@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
 
 'use client';
 
@@ -182,7 +182,7 @@ export const SettingsButton: React.FC = () => {
                   checked={defaultAggregateSearch}
                   onChange={(e) => handleAggregateToggle(e.target.checked)}
                 />
-                <div className='w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-colors dark:bg-gray-600'></div>
+                <div className='w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-black dark:peer-checked:bg-white transition-colors dark:bg-gray-600'></div>
                 <div className='absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform peer-checked:translate-x-5'></div>
               </div>
             </label>
@@ -206,7 +206,7 @@ export const SettingsButton: React.FC = () => {
                   checked={enableOptimization}
                   onChange={(e) => handleOptimizationToggle(e.target.checked)}
                 />
-                <div className='w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-colors dark:bg-gray-600'></div>
+                <div className='w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-black dark:peer-checked:bg-white transition-colors dark:bg-gray-600'></div>
                 <div className='absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform peer-checked:translate-x-5'></div>
               </div>
             </label>
@@ -224,7 +224,7 @@ export const SettingsButton: React.FC = () => {
             </div>
             <input
               type='text'
-              className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+              className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent'
               placeholder='例如: https://proxy.example.com/fetch?url='
               value={doubanProxyUrl}
               onChange={(e) => handleDoubanProxyUrlChange(e.target.value)}
@@ -249,7 +249,7 @@ export const SettingsButton: React.FC = () => {
                   checked={enableImageProxy}
                   onChange={(e) => handleImageProxyToggle(e.target.checked)}
                 />
-                <div className='w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-colors dark:bg-gray-600'></div>
+                <div className='w-11 h-6 bg-gray-300 rounded-full peer-checked:bg-black dark:peer-checked:bg-white transition-colors dark:bg-gray-600'></div>
                 <div className='absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform peer-checked:translate-x-5'></div>
               </div>
             </label>
@@ -267,7 +267,7 @@ export const SettingsButton: React.FC = () => {
             </div>
             <input
               type='text'
-              className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+              className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-colors ${
                 enableImageProxy
                   ? 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400'
                   : 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 text-gray-400 dark:text-gray-500 placeholder-gray-400 dark:placeholder-gray-600 cursor-not-allowed'

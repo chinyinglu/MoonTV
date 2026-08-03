@@ -4,8 +4,8 @@ import { createContext, ReactNode, useContext } from 'react';
 
 const SiteContext = createContext<{ siteName: string; announcement?: string }>({
   // 默认值
-  siteName: 'Nebula',
-  announcement: 'Nebula - 探索无限影视宇宙',
+  siteName: 'Zhiying Cinema',
+  announcement: 'Zhiying Cinema - 探索无限影视宇宙',
 });
 
 export const useSite = () => useContext(SiteContext);

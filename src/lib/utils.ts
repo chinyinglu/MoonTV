@@ -40,6 +40,56 @@ export function processImageUrl(originalUrl: string): string {
   return `${proxyUrl}${encodeURIComponent(originalUrl)}`;
 }
 
+export function buildImageProxyUrl(originalUrl: string): string {
+  if (!originalUrl) return '';
+  return `/api/image-proxy?url=${encodeURIComponent(originalUrl)}`;
+}
+
+/**
+ * Request the largest public Douban photo variant for full-bleed artwork.
+ * Card thumbnails keep their original URL; hero surfaces opt into this helper.
+ */
+export function getHighResolutionImageUrl(originalUrl: string): string {
+  const normalizedUrl = originalUrl?.trim().replace(/^http:\/\//i, 'https://');
+  if (!normalizedUrl) return '';
+
+  try {
+    const url = new URL(normalizedUrl);
+    if (
+      /(^|\.)doubanio\.com$/i.test(url.hostname) &&
+      /\/view\/photo\/[^/]+\/public\//.test(url.pathname)
+    ) {
+      url.pathname = url.pathname.replace(
+        /\/view\/photo\/[^/]+\/public\//,
+        '/view/photo/l/public/'
+      );
+      return url.toString();
+    }
+  } catch {
+    return normalizedUrl;
+  }
+
+  return normalizedUrl;
+}
+
+/**
+ * Return image sources in the order they should be attempted.
+ * A configured proxy remains the first choice. Without one, the browser gets a
+ * fast direct attempt before falling back to the built-in same-origin proxy.
+ */
+export function getImageCandidates(originalUrl: string): string[] {
+  const normalizedUrl = originalUrl?.trim().replace(/^http:\/\//i, 'https://');
+  if (!normalizedUrl) return [];
+
+  const configuredUrl = processImageUrl(normalizedUrl);
+  const candidates =
+    configuredUrl !== normalizedUrl
+      ? [configuredUrl, buildImageProxyUrl(normalizedUrl)]
+      : [buildImageProxyUrl(normalizedUrl), normalizedUrl];
+
+  return Array.from(new Set(candidates));
+}
+
 export function cleanHtmlTags(text: string): string {
   if (!text) return '';
   return text

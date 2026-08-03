@@ -151,9 +151,9 @@ async function initConfig() {
         }
         adminConfig = {
           SiteConfig: {
-            SiteName: process.env.SITE_NAME || 'Nebula',
+            SiteName: process.env.SITE_NAME || 'Zhiying Cinema',
             Announcement:
-              process.env.ANNOUNCEMENT || 'Nebula - 探索无限影视宇宙',
+              process.env.ANNOUNCEMENT || 'Zhiying Cinema - 探索无限影视宇宙',
             SearchDownstreamMaxPage:
               Number(process.env.NEXT_PUBLIC_SEARCH_MAX_PAGE) || 5,
             SiteInterfaceCacheTime: fileConfig.cache_time || 7200,
@@ -188,7 +188,7 @@ async function initConfig() {
     // 本地存储直接使用文件配置
     cachedConfig = {
       SiteConfig: {
-        SiteName: process.env.SITE_NAME || 'Nebula',
+        SiteName: process.env.SITE_NAME || 'Zhiying Cinema',
         Announcement:
           process.env.ANNOUNCEMENT ||
           '本网站仅提供影视信息搜索服务，所有内容均来自第三方网站。本站不存储任何视频资源，不对任何内容的准确性、合法性、完整性负责。',
@@ -227,7 +227,7 @@ export async function getConfig(): Promise<AdminConfig> {
   }
   if (adminConfig) {
     // 合并一些环境变量配置
-    adminConfig.SiteConfig.SiteName = process.env.SITE_NAME || '婷宝的私人影院';
+    adminConfig.SiteConfig.SiteName = process.env.SITE_NAME || 'Zhiying Cinema';
     adminConfig.SiteConfig.Announcement =
       process.env.ANNOUNCEMENT ||
       '本网站仅提供影视信息搜索服务，所有内容均来自第三方网站。本站不存储任何视频资源，不对任何内容的准确性、合法性、完整性负责。';
@@ -311,7 +311,7 @@ export async function resetConfig() {
   }
   const adminConfig = {
     SiteConfig: {
-      SiteName: process.env.SITE_NAME || 'Nebula',
+      SiteName: process.env.SITE_NAME || 'Zhiying Cinema',
       Announcement:
         process.env.ANNOUNCEMENT ||
         '本网站仅提供影视信息搜索服务，所有内容均来自第三方网站。本站不存储任何视频资源，不对任何内容的准确性、合法性、完整性负责。',

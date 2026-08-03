@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps, @typescript-eslint/no-explicit-any */
+﻿/* eslint-disable react-hooks/exhaustive-deps, @typescript-eslint/no-explicit-any */
 'use client';
 
 import { Search, X } from 'lucide-react';
@@ -183,10 +183,17 @@ function SearchPageClient() {
 
   return (
     <PageLayout activePath='/search'>
-      <div className='px-4 sm:px-10 py-4 sm:py-8 overflow-visible mb-10'>
+      <div className='mx-auto max-w-[1480px] px-4 py-8 sm:px-10 sm:py-12'>
+        <div className='mx-auto mb-8 max-w-4xl text-center sm:mb-10'>
+          <p className='ui-kicker'>Search the archive</p>
+          <h1 className='ui-heading mt-3 text-4xl sm:text-6xl'>搜索片库</h1>
+          <p className='ui-muted mx-auto mt-4 max-w-xl text-sm leading-6'>
+            从全部片源中寻找电影、剧集与综艺，选择最适合的播放线路。
+          </p>
+        </div>
         {/* 搜索框 */}
         <div className='mb-8'>
-          <form onSubmit={handleSearch} className='max-w-2xl mx-auto'>
+          <form onSubmit={handleSearch} className='mx-auto max-w-3xl'>
             <div className='relative'>
               <Search className='absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400 dark:text-gray-500' />
               <input
@@ -195,25 +202,30 @@ function SearchPageClient() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder='搜索电影、电视剧...'
-                className='w-full h-12 rounded-lg bg-gray-50/80 py-3 pl-10 pr-4 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-400 focus:bg-white border border-gray-200/50 shadow-sm dark:bg-gray-800 dark:text-gray-300 dark:placeholder-gray-500 dark:focus:bg-gray-700 dark:border-gray-700'
+                className='glass-panel h-14 w-full rounded-full py-3 pl-11 pr-5 text-sm focus:outline-none'
+                style={{
+                  color: 'var(--text)',
+                  background: 'var(--surface-strong)',
+                }}
               />
             </div>
           </form>
         </div>
 
         {/* 搜索结果或搜索历史 */}
-        <div className='max-w-[95%] mx-auto mt-12 overflow-visible'>
+        <div className='mx-auto mt-12 max-w-[1380px]'>
           {isLoading ? (
             <div className='flex justify-center items-center h-40'>
-              <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-green-500'></div>
+              <div
+                className='h-8 w-8 animate-spin rounded-full border border-current border-t-transparent'
+                style={{ color: 'var(--text)' }}
+              ></div>
             </div>
           ) : showResults ? (
             <section className='mb-12'>
               {/* 标题 + 聚合开关 */}
               <div className='mb-8 flex items-center justify-between'>
-                <h2 className='text-xl font-bold text-gray-800 dark:text-gray-200'>
-                  搜索结果
-                </h2>
+                <h2 className='ui-heading text-2xl'>搜索结果</h2>
                 {/* 聚合开关 */}
                 <label className='flex items-center gap-2 cursor-pointer select-none'>
                   <span className='text-sm text-gray-700 dark:text-gray-300'>
@@ -228,7 +240,7 @@ function SearchPageClient() {
                         setViewMode(viewMode === 'agg' ? 'all' : 'agg')
                       }
                     />
-                    <div className='w-9 h-5 bg-gray-300 rounded-full peer-checked:bg-green-500 transition-colors dark:bg-gray-600'></div>
+                    <div className='w-9 h-5 bg-gray-300 rounded-full peer-checked:bg-black dark:peer-checked:bg-white transition-colors dark:bg-gray-600'></div>
                     <div className='absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-4'></div>
                   </div>
                 </label>
@@ -287,7 +299,7 @@ function SearchPageClient() {
           ) : searchHistory.length > 0 ? (
             // 搜索历史
             <section className='mb-12'>
-              <h2 className='mb-4 text-xl font-bold text-gray-800 text-left dark:text-gray-200'>
+              <h2 className='ui-heading mb-5 text-left text-2xl'>
                 搜索历史
                 {searchHistory.length > 0 && (
                   <button
@@ -310,7 +322,7 @@ function SearchPageClient() {
                           `/search?q=${encodeURIComponent(item.trim())}`
                         );
                       }}
-                      className='px-4 py-2 bg-gray-500/10 hover:bg-gray-300 rounded-full text-sm text-gray-700 transition-colors duration-200 dark:bg-gray-700/50 dark:hover:bg-gray-600 dark:text-gray-300'
+                      className='glass-chip text-sm transition duration-300 hover:-translate-y-0.5'
                     >
                       {item}
                     </button>

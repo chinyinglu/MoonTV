@@ -1,175 +1,275 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
-  .scrollbar-hide {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-  }
-
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none; /* Chrome, Safari and Opera */
-  }
+:root {
+  color-scheme: light;
+  --page: #f2f2ee;
+  --page-deep: #e9e9e3;
+  --text: #111214;
+  --text-soft: rgba(17, 18, 20, 0.62);
+  --text-faint: rgba(17, 18, 20, 0.38);
+  --surface: rgba(255, 255, 252, 0.7);
+  --surface-strong: rgba(255, 255, 252, 0.88);
+  --surface-subtle: rgba(17, 18, 20, 0.035);
+  --line: rgba(17, 18, 20, 0.12);
+  --line-strong: rgba(17, 18, 20, 0.2);
+  --inverse: #111214;
+  --inverse-text: #fafaf7;
+  --shadow: 0 24px 70px rgba(20, 21, 24, 0.09);
+  --shadow-soft: 0 12px 36px rgba(20, 21, 24, 0.06);
+  --radius-xl: 2rem;
+  --radius-lg: 1.4rem;
+  --radius-md: 0.9rem;
+  --motion: cubic-bezier(0.22, 1, 0.36, 1);
+  --focus: rgba(17, 18, 20, 0.88);
+  --particle: rgba(17, 18, 20, 0.11);
 }
 
-:root {
-  --foreground-rgb: 255, 255, 255;
+html.dark {
+  color-scheme: dark;
+  --page: #08090a;
+  --page-deep: #030405;
+  --text: #f4f4f0;
+  --text-soft: rgba(244, 244, 240, 0.64);
+  --text-faint: rgba(244, 244, 240, 0.36);
+  --surface: rgba(18, 19, 20, 0.66);
+  --surface-strong: rgba(22, 23, 24, 0.86);
+  --surface-subtle: rgba(255, 255, 255, 0.045);
+  --line: rgba(255, 255, 255, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.2);
+  --inverse: #f4f4f0;
+  --inverse-text: #101112;
+  --shadow: 0 30px 90px rgba(0, 0, 0, 0.34);
+  --shadow-soft: 0 16px 42px rgba(0, 0, 0, 0.24);
+  --focus: rgba(244, 244, 240, 0.92);
+  --particle: rgba(255, 255, 255, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
 }
 
 html,
 body {
-  height: 100%;
+  min-height: 100%;
   overflow-x: hidden;
-  /* 阻止 iOS Safari 拉动回弹 */
-  overscroll-behavior: none;
+  overscroll-behavior-x: none;
+}
+
+html {
+  background: var(--page);
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-}
-
-html:not(.dark) body {
-  background: linear-gradient(
-    180deg,
-    #f8f9fc 0%,
-    #f0f2f8 25%,
-    #e8ecf5 50%,
-    #f2f4f9 75%,
-    #f8f9fc 100%
-  );
+  position: relative;
+  isolation: isolate;
+  margin: 0;
+  background: radial-gradient(
+      circle at 76% -8%,
+      var(--surface-strong),
+      transparent 34rem
+    ),
+    linear-gradient(180deg, var(--page) 0%, var(--page-deep) 100%);
   background-attachment: fixed;
+  color: var(--text);
+  font-family: 'Avenir Next', 'Segoe UI Variable', 'PingFang SC',
+    'Microsoft YaHei UI', sans-serif;
+  font-feature-settings: 'kern', 'ss01';
+  letter-spacing: -0.01em;
 }
 
-/* 自定义滚动条样式 */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+body::before,
+body::after {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  content: '';
 }
 
-::-webkit-scrollbar-track {
-  background: rgba(31, 41, 55, 0.1);
+body::before {
+  opacity: 0.58;
+  background-image: radial-gradient(
+      circle,
+      var(--particle) 0 1px,
+      transparent 1.35px
+    ),
+    radial-gradient(circle, var(--particle) 0 0.7px, transparent 1px);
+  background-position: 0 0, 19px 23px;
+  background-size: 44px 44px, 71px 71px;
+  mask-image: linear-gradient(to bottom, black, transparent 82%);
+  animation: particle-drift 28s linear infinite;
 }
 
-::-webkit-scrollbar-thumb {
-  background: rgba(75, 85, 99, 0.3);
-  border-radius: 4px;
+body::after {
+  z-index: -1;
+  opacity: 0.48;
+  background: radial-gradient(
+      circle at 18% 12%,
+      var(--surface-strong),
+      transparent 23rem
+    ),
+    radial-gradient(circle at 88% 48%, var(--surface-subtle), transparent 26rem);
+  filter: blur(18px);
+  animation: orbital-drift 20s ease-in-out infinite alternate;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(107, 114, 128, 0.5);
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* 视频卡片悬停效果 */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--inverse);
+  color: var(--inverse-text);
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.ui-kicker {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.ui-heading {
+  color: var(--text);
+  font-family: Bahnschrift, 'Avenir Next', 'Segoe UI Variable Display',
+    sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+}
+
+.ui-muted {
+  color: var(--text-soft);
+}
+
+.ui-faint {
+  color: var(--text-faint);
+}
+
+.ui-icon-button {
+  display: inline-flex;
+  width: 2.65rem;
+  height: 2.65rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-soft);
+  backdrop-filter: blur(18px) saturate(110%);
+  transition: transform 350ms var(--motion), color 250ms ease,
+    border-color 250ms ease, background 250ms ease;
+}
+
+.ui-icon-button:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+  background: var(--surface-strong);
+  color: var(--text);
+}
+
 .video-card-hover {
-  transition: transform 0.3s ease;
+  transition: transform 420ms var(--motion);
 }
 
 .video-card-hover:hover {
-  transform: scale(1.05);
+  transform: translateY(-3px);
 }
 
-/* 渐变遮罩 */
 .gradient-overlay {
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0) 0%,
-    rgba(0, 0, 0, 0.8) 100%
-  );
+  background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.82));
 }
 
-/* 隐藏移动端（<768px）垂直滚动条 */
-@media (max-width: 767px) {
-  html,
-  body {
-    -ms-overflow-style: none; /* IE & Edge */
-    scrollbar-width: none; /* Firefox */
-  }
+.art-poster {
+  background-color: #000 !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+}
 
-  html::-webkit-scrollbar,
-  body::-webkit-scrollbar {
-    display: none; /* Chrome Safari */
+@keyframes particle-drift {
+  to {
+    background-position: 44px 22px, -52px 94px;
   }
 }
 
-/* 隐藏所有滚动条（兼容 WebKit、Firefox、IE/Edge） */
-* {
-  -ms-overflow-style: none; /* IE & Edge */
-  scrollbar-width: none; /* Firefox */
-}
-
-*::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
-}
-
-/* View Transitions API 动画 */
-@keyframes slide-from-top {
+@keyframes orbital-drift {
   from {
-    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+    transform: translate3d(-1.5%, -1%, 0) scale(1);
   }
   to {
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    transform: translate3d(1.5%, 1%, 0) scale(1.04);
   }
 }
 
-@keyframes slide-from-bottom {
+@keyframes theme-reveal {
   from {
-    clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+    clip-path: circle(0 at 96% 3%);
   }
   to {
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    clip-path: circle(150% at 96% 3%);
   }
 }
 
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 0.8s;
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  animation-fill-mode: both;
-}
-
-/*
-  切换时，旧的视图不应该有动画，它应该在下面，等待被新的视图覆盖。
-  这可以防止在动画完成前，页面底部提前变色。
-*/
 ::view-transition-old(root) {
   animation: none;
 }
 
-/* 从浅色到深色：新内容（深色）从顶部滑入 */
-html.dark::view-transition-new(root) {
-  animation-name: slide-from-top;
+::view-transition-new(root) {
+  animation: theme-reveal 650ms var(--motion) both;
 }
 
-/* 从深色到浅色：新内容（浅色）从底部滑入 */
-html:not(.dark)::view-transition-new(root) {
-  animation-name: slide-from-bottom;
-}
-
-/* 强制播放器内部的 video 元素高度为 100%，并保持内容完整显示 */
-div[data-media-provider] video {
-  height: 100%;
-  object-fit: contain;
-}
-
-.art-poster {
-  background-size: contain !important; /* 使图片完整展示 */
-  background-position: center center !important; /* 居中显示 */
-  background-repeat: no-repeat !important; /* 防止重复 */
-  background-color: #000 !important; /* 其余区域填充为黑色 */
-}
-
-/* 隐藏移动端竖屏时的 pip 按钮 */
 @media (max-width: 768px) {
-  .art-control-pip {
-    display: none !important;
-  }
-
-  .art-control-fullscreenWeb {
-    display: none !important;
-  }
-
+  .art-control-pip,
+  .art-control-fullscreenWeb,
   .art-control-volume {
     display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

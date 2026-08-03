@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, no-console */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any, no-console */
 
 'use client';
 
@@ -277,11 +277,11 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
         <h4 className='text-sm font-medium text-gray-700 dark:text-gray-300 mb-3'>
           用户统计
         </h4>
-        <div className='p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800'>
-          <div className='text-2xl font-bold text-green-800 dark:text-green-300'>
+        <div className='p-4 bg-white/60 dark:bg-white/[0.04] rounded-lg border border-gray-200 dark:border-white/10'>
+          <div className='text-2xl font-bold text-gray-900 dark:text-gray-100'>
             {config.UserConfig.Users.length}
           </div>
-          <div className='text-sm text-green-600 dark:text-green-400'>
+          <div className='text-sm text-gray-600 dark:text-gray-400'>
             总用户数
           </div>
         </div>
@@ -317,9 +317,9 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
               toggleAllowRegister(!userSettings.enableRegistration)
             }
             disabled={isD1Storage || isUpstashStorage}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 ${
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 ${
               userSettings.enableRegistration
-                ? 'bg-green-600'
+                ? 'bg-neutral-900 dark:bg-white'
                 : 'bg-gray-200 dark:bg-gray-700'
             } ${
               isD1Storage || isUpstashStorage
@@ -352,7 +352,7 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
                 setChangePasswordUser({ username: '', password: '' });
               }
             }}
-            className='px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors'
+            className='px-3 py-1 bg-neutral-900 hover:bg-black dark:bg-neutral-100 dark:hover:bg-white dark:text-black text-white text-sm rounded-lg transition-colors'
           >
             {showAddUserForm ? '取消' : '添加用户'}
           </button>
@@ -369,7 +369,7 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
                 onChange={(e) =>
                   setNewUser((prev) => ({ ...prev, username: e.target.value }))
                 }
-                className='flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent'
+                className='flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 focus:border-transparent'
               />
               <input
                 type='password'
@@ -378,12 +378,12 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
                 onChange={(e) =>
                   setNewUser((prev) => ({ ...prev, password: e.target.value }))
                 }
-                className='flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent'
+                className='flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 focus:border-transparent'
               />
               <button
                 onClick={handleAddUser}
                 disabled={!newUser.username || !newUser.password}
-                className='w-full sm:w-auto px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded-lg transition-colors'
+                className='w-full sm:w-auto px-4 py-2 bg-neutral-900 hover:bg-black dark:bg-neutral-100 dark:hover:bg-white dark:text-black disabled:bg-gray-400 text-white rounded-lg transition-colors'
               >
                 添加
               </button>
@@ -393,8 +393,8 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
 
         {/* 修改密码表单 */}
         {showChangePasswordForm && (
-          <div className='mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700'>
-            <h5 className='text-sm font-medium text-blue-800 dark:text-blue-300 mb-3'>
+          <div className='mb-4 p-4 bg-gray-50 dark:bg-white/[0.04] rounded-lg border border-gray-200 dark:border-white/10'>
+            <h5 className='text-sm font-medium text-gray-800 dark:text-gray-200 mb-3'>
               修改用户密码
             </h5>
             <div className='flex flex-col sm:flex-row gap-4 sm:gap-3'>
@@ -415,12 +415,12 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
                     password: e.target.value,
                   }))
                 }
-                className='flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                className='flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 focus:border-transparent'
               />
               <button
                 onClick={handleChangePassword}
                 disabled={!changePasswordUser.password}
-                className='w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg transition-colors'
+                className='w-full sm:w-auto px-4 py-2 bg-neutral-900 hover:bg-black dark:bg-neutral-100 dark:hover:bg-white dark:text-black disabled:bg-gray-400 text-white rounded-lg transition-colors'
               >
                 修改密码
               </button>
@@ -516,7 +516,7 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
                               user.role === 'owner'
                                 ? 'bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300'
                                 : user.role === 'admin'
-                                ? 'bg-purple-100 dark:bg-purple-900/20 text-purple-800 dark:text-purple-300'
+                                ? 'bg-gray-100 dark:bg-white/[0.06] text-gray-800 dark:text-gray-200'
                                 : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
                             }`}
                           >
@@ -531,7 +531,7 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
                           <span
                             className={`px-2 py-1 text-xs rounded-full ${
                               !user.banned
-                                ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300'
+                                ? 'bg-gray-100 dark:bg-white/[0.06] text-gray-800 dark:text-gray-200'
                                 : 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
                             }`}
                           >
@@ -545,7 +545,7 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
                               onClick={() =>
                                 handleShowChangePasswordForm(user.username)
                               }
-                              className='inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/40 dark:hover:bg-blue-900/60 dark:text-blue-200 transition-colors'
+                              className='inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-white/[0.06] dark:hover:bg-white/10 dark:text-gray-200 transition-colors'
                             >
                               修改密码
                             </button>
@@ -556,7 +556,7 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
                               {user.role === 'user' && (
                                 <button
                                   onClick={() => handleSetAdmin(user.username)}
-                                  className='inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 hover:bg-purple-200 dark:bg-purple-900/40 dark:hover:bg-purple-900/60 dark:text-purple-200 transition-colors'
+                                  className='inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-white/[0.06] dark:hover:bg-white/10 dark:text-gray-200 transition-colors'
                                 >
                                   设为管理
                                 </button>
@@ -584,7 +584,7 @@ const UserConfig = ({ config, role, refreshConfig }: UserConfigProps) => {
                                     onClick={() =>
                                       handleUnbanUser(user.username)
                                     }
-                                    className='inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/40 dark:hover:bg-green-900/60 dark:text-green-300 transition-colors'
+                                    className='inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-white/[0.06] dark:hover:bg-white/10 dark:text-gray-200 transition-colors'
                                   >
                                     解封
                                   </button>
@@ -786,7 +786,7 @@ const VideoSourceConfig = ({
           <span
             className={`px-2 py-1 text-xs rounded-full ${
               !source.disabled
-                ? 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300'
+                ? 'bg-gray-100 dark:bg-white/[0.06] text-gray-800 dark:text-gray-200'
                 : 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300'
             }`}
           >
@@ -799,7 +799,7 @@ const VideoSourceConfig = ({
             className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium ${
               !source.disabled
                 ? 'bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/60'
-                : 'bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/60'
+                : 'bg-gray-100 dark:bg-white/[0.08] text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-white/15'
             } transition-colors`}
           >
             {!source.disabled ? '禁用' : '启用'}
@@ -834,7 +834,7 @@ const VideoSourceConfig = ({
         </h4>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
-          className='px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors'
+          className='px-3 py-1 bg-neutral-900 hover:bg-black dark:bg-neutral-100 dark:hover:bg-white dark:text-black text-white text-sm rounded-lg transition-colors'
         >
           {showAddForm ? '取消' : '添加视频源'}
         </button>
@@ -884,7 +884,7 @@ const VideoSourceConfig = ({
             <button
               onClick={handleAddSource}
               disabled={!newSource.name || !newSource.key || !newSource.api}
-              className='w-full sm:w-auto px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white rounded-lg transition-colors'
+              className='w-full sm:w-auto px-4 py-2 bg-neutral-900 hover:bg-black dark:bg-neutral-100 dark:hover:bg-white dark:text-black disabled:bg-gray-400 text-white rounded-lg transition-colors'
             >
               添加
             </button>
@@ -944,7 +944,7 @@ const VideoSourceConfig = ({
         <div className='flex justify-end'>
           <button
             onClick={handleSaveOrder}
-            className='px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors'
+            className='px-3 py-1.5 text-sm bg-neutral-900 hover:bg-black text-white dark:bg-neutral-100 dark:hover:bg-white dark:text-black rounded-lg transition-colors'
           >
             保存排序
           </button>
@@ -1044,7 +1044,7 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
             setSiteSettings((prev) => ({ ...prev, SiteName: e.target.value }))
           }
           disabled={isD1Storage || isUpstashStorage}
-          className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+          className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 focus:border-transparent ${
             isD1Storage || isUpstashStorage
               ? 'opacity-50 cursor-not-allowed'
               : ''
@@ -1083,7 +1083,7 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
           }
           disabled={isD1Storage || isUpstashStorage}
           rows={3}
-          className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+          className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 focus:border-transparent ${
             isD1Storage || isUpstashStorage
               ? 'opacity-50 cursor-not-allowed'
               : ''
@@ -1106,7 +1106,7 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
               SearchDownstreamMaxPage: Number(e.target.value),
             }))
           }
-          className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent'
+          className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 focus:border-transparent'
         />
       </div>
 
@@ -1125,7 +1125,7 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
               SiteInterfaceCacheTime: Number(e.target.value),
             }))
           }
-          className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent'
+          className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 focus:border-transparent'
         />
       </div>
 
@@ -1161,7 +1161,7 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
             }))
           }
           disabled={isD1Storage || isUpstashStorage}
-          className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent ${
+          className={`w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-gray-500 focus:border-transparent ${
             isD1Storage || isUpstashStorage
               ? 'opacity-50 cursor-not-allowed'
               : ''
@@ -1180,7 +1180,7 @@ const SiteConfigComponent = ({ config }: { config: AdminConfig | null }) => {
           className={`px-4 py-2 ${
             saving || isD1Storage || isUpstashStorage
               ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-green-600 hover:bg-green-700'
+              : 'bg-neutral-900 hover:bg-black dark:bg-neutral-100 dark:hover:bg-white dark:text-black'
           } text-white rounded-lg transition-colors`}
         >
           {saving ? '保存中…' : '保存'}
