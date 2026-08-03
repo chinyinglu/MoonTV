@@ -25,6 +25,10 @@ export async function generateMetadata(): Promise<Metadata> {
     title: siteName,
     description: '探索无限影视宇宙',
     manifest: '/manifest.json',
+    icons: {
+      icon: [{ url: '/favicon.svg?v=3', type: 'image/svg+xml' }],
+      shortcut: '/favicon.svg?v=3',
+    },
   };
 }
 
