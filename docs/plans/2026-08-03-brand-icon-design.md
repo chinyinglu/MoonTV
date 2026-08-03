@@ -6,7 +6,7 @@ The icon uses a monochrome cinema clapperboard with a custom cut-angle `Z` apert
 
 ## Asset system
 
-- `public/favicon.svg`: master scalable favicon.
+- `public/favicon.svg`: master scalable favicon.`r`n- `public/icons/zhiying-cinema-*-v1.*`: immutable deployed copies that bypass CDN path caching.
 - `public/favicon.ico`: 16, 32, 48, and 64 pixel browser fallback.
 - `public/favicon.png`: 64 pixel PNG fallback.
 - `public/icons/apple-touch-icon.png`: 180 pixel iOS home-screen icon.
@@ -16,4 +16,4 @@ The browser assets use a transparent rounded-square silhouette. Mobile assets ar
 
 ## Integration and validation
 
-Next.js metadata advertises SVG, PNG, ICO, and Apple Touch variants with the `v=4` cache key. The generated web manifest marks mobile icons as `any maskable`. Validation covers TypeScript, ESLint, exact raster dimensions, SVG/ICO signatures, local HTTP content types, and the deployed Cloudflare responses.
+Next.js metadata advertises immutable versioned SVG, PNG, ICO, and Apple Touch filenames. The generated web manifest marks mobile icons as `any maskable`. Validation covers TypeScript, ESLint, exact raster dimensions, SVG/ICO signatures, local HTTP content types, and the deployed Cloudflare responses.

@@ -27,17 +27,17 @@ export async function generateMetadata(): Promise<Metadata> {
     manifest: '/manifest.json',
     icons: {
       icon: [
-        { url: '/favicon.svg?v=4', type: 'image/svg+xml' },
+        { url: '/icons/zhiying-cinema-v1.svg', type: 'image/svg+xml' },
         {
-          url: '/favicon.png?v=4',
+          url: '/icons/zhiying-cinema-64-v1.png',
           type: 'image/png',
           sizes: '64x64',
         },
       ],
-      shortcut: '/favicon.ico?v=4',
+      shortcut: '/icons/zhiying-cinema-v1.ico',
       apple: [
         {
-          url: '/icons/apple-touch-icon.png?v=4',
+          url: '/icons/zhiying-cinema-apple-v1.png',
           type: 'image/png',
           sizes: '180x180',
         },
