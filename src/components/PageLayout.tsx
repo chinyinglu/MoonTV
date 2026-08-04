@@ -2,21 +2,32 @@
 import { LogoutButton } from './LogoutButton';
 import MobileBottomNav from './MobileBottomNav';
 import MobileHeader from './MobileHeader';
-import { SettingsButton } from './SettingsButton';
+import {
+  type SkipSegmentSettingsControls,
+  SettingsButton,
+} from './SettingsButton';
 import Sidebar from './Sidebar';
 import { ThemeToggle } from './ThemeToggle';
 
 interface PageLayoutProps {
   children: React.ReactNode;
   activePath?: string;
+  skipSegmentControls?: SkipSegmentSettingsControls;
 }
 
-const PageLayout = ({ children, activePath = '/' }: PageLayoutProps) => {
+const PageLayout = ({
+  children,
+  activePath = '/',
+  skipSegmentControls,
+}: PageLayoutProps) => {
   const showBackButton = ['/play', '/detail'].includes(activePath);
 
   return (
     <div className='app-shell relative min-h-screen w-full overflow-x-clip'>
-      <MobileHeader showBackButton={showBackButton} />
+      <MobileHeader
+        showBackButton={showBackButton}
+        skipSegmentControls={skipSegmentControls}
+      />
 
       <div className='flex min-h-screen w-full md:grid md:grid-cols-[auto_1fr]'>
         <div className='hidden md:contents'>
@@ -31,7 +42,7 @@ const PageLayout = ({ children, activePath = '/' }: PageLayoutProps) => {
               </div>
             )}
             <div className='pointer-events-auto absolute right-5 top-4 flex items-center gap-2'>
-              <SettingsButton />
+              <SettingsButton skipSegmentControls={skipSegmentControls} />
               <LogoutButton />
               <ThemeToggle />
             </div>

@@ -17,6 +17,12 @@ import {
   savePlayRecord,
   subscribeToDataUpdates,
 } from '@/lib/db.client';
+import {
+  clearSkipSegmentsConfig,
+  getSkipSegmentsConfig,
+  saveSkipSegmentsConfig,
+  SkipEpisodeConfig,
+} from '@/lib/skip-segments';
 import { SearchResult } from '@/lib/types';
 import { getVideoResolutionFromM3u8 } from '@/lib/utils';
 
@@ -24,6 +30,9 @@ import EpisodeSelector from '@/components/EpisodeSelector';
 import MovieArchive from '@/components/MovieArchive';
 import PageLayout from '@/components/PageLayout';
 import PosterImage from '@/components/PosterImage';
+import SkipSegmentOverlay, {
+  SkipSegmentKind,
+} from '@/components/SkipSegmentOverlay';
 
 // 扩展 HTMLVideoElement 类型以支持 hls 属性
 declare global {
@@ -163,6 +172,80 @@ function PlayPageClient() {
   // 播放进度保存相关
   const saveIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const lastSaveTimeRef = useRef<number>(0);
+
+  // 片头片尾标记：独立于播放记录保存，按播放源/影片/集数隔离。
+  const [activeSkipKind, setActiveSkipKind] = useState<SkipSegmentKind | null>(
+    null
+  );
+  const [skipSeconds, setSkipSeconds] = useState(0);
+  const [skipSegmentsEnabled, setSkipSegmentsEnabled] = useState(true);
+  const [autoSkipIntro, setAutoSkipIntro] = useState(true);
+  const [autoSkipOutro, setAutoSkipOutro] = useState(false);
+  const [skipEpisodeConfig, setSkipEpisodeConfig] =
+    useState<SkipEpisodeConfig | null>(null);
+  const skipSegmentsEnabledRef = useRef(true);
+  const autoSkipIntroRef = useRef(true);
+  const autoSkipOutroRef = useRef(false);
+  const skipEpisodeConfigRef = useRef<SkipEpisodeConfig | null>(null);
+  const skipStateRef = useRef({
+    key: '',
+    introApplied: false,
+    outroApplied: false,
+  });
+
+  useEffect(() => {
+    try {
+      const enabled = localStorage.getItem('skip_segments_enabled');
+      const intro = localStorage.getItem('skip_auto_intro');
+      const outro = localStorage.getItem('skip_auto_outro');
+      if (enabled !== null) {
+        const nextEnabled = enabled === 'true';
+        skipSegmentsEnabledRef.current = nextEnabled;
+        setSkipSegmentsEnabled(nextEnabled);
+      }
+      if (intro !== null) setAutoSkipIntro(intro === 'true');
+      if (outro !== null) setAutoSkipOutro(outro === 'true');
+    } catch {
+      // Keep defaults when browser storage is unavailable.
+    }
+  }, []);
+
+  useEffect(() => {
+    skipSegmentsEnabledRef.current = skipSegmentsEnabled;
+    autoSkipIntroRef.current = autoSkipIntro;
+    autoSkipOutroRef.current = autoSkipOutro;
+  }, [skipSegmentsEnabled, autoSkipIntro, autoSkipOutro]);
+
+  useEffect(() => {
+    if (!currentSource || !currentId) {
+      skipEpisodeConfigRef.current = null;
+      setSkipEpisodeConfig(null);
+      skipStateRef.current = {
+        key: '',
+        introApplied: false,
+        outroApplied: false,
+      };
+      setActiveSkipKind(null);
+      setSkipSeconds(0);
+      return;
+    }
+
+    const episode = currentEpisodeIndex + 1;
+    const savedConfig = getSkipSegmentsConfig(
+      currentSource,
+      currentId,
+      episode
+    );
+    skipEpisodeConfigRef.current = savedConfig;
+    setSkipEpisodeConfig(savedConfig);
+    skipStateRef.current = {
+      key: `${currentSource}:${currentId}:${episode}`,
+      introApplied: false,
+      outroApplied: false,
+    };
+    setActiveSkipKind(null);
+    setSkipSeconds(0);
+  }, [currentSource, currentId, currentEpisodeIndex]);
 
   const artPlayerRef = useRef<any>(null);
   const artRef = useRef<HTMLDivElement | null>(null);
@@ -759,6 +842,194 @@ function PlayPageClient() {
     }
   };
 
+  const getSkipRange = (kind: SkipSegmentKind, duration: number) => {
+    const range = skipEpisodeConfigRef.current?.[kind];
+    if (!range || !Number.isFinite(duration) || duration <= 0) return null;
+    const end = Math.min(range.end ?? duration, duration);
+    if (end <= range.start) return null;
+    return { start: range.start, end };
+  };
+
+  const handleSkipNow = () => {
+    const player = artPlayerRef.current;
+    const kind = activeSkipKind;
+    if (!player || !kind) return;
+
+    if (kind === 'outro') {
+      const episodeCount = detailRef.current?.episodes?.length || 0;
+      if (currentEpisodeIndexRef.current < episodeCount - 1) {
+        skipStateRef.current.outroApplied = true;
+        setActiveSkipKind(null);
+        handleNextEpisode();
+        return;
+      }
+    }
+
+    const duration = player.duration || 0;
+    const range = getSkipRange(kind, duration);
+    if (!range) return;
+    player.currentTime =
+      kind === 'intro' ? range.end : Math.max(duration - 0.2, 0);
+    if (kind === 'intro') {
+      skipStateRef.current.introApplied = true;
+    } else {
+      skipStateRef.current.outroApplied = true;
+    }
+    setActiveSkipKind(null);
+    setSkipSeconds(0);
+  };
+
+  const handleSetSkipMarker = (kind: SkipSegmentKind) => {
+    if (
+      !currentSourceRef.current ||
+      !currentIdRef.current ||
+      !artPlayerRef.current
+    ) {
+      return;
+    }
+
+    const currentTime = Math.floor(artPlayerRef.current.currentTime || 0);
+    if (currentTime < 1) return;
+
+    const currentConfig = skipEpisodeConfigRef.current || {};
+    const nextConfig: SkipEpisodeConfig = {
+      ...currentConfig,
+      [kind]:
+        kind === 'intro'
+          ? { start: 0, end: currentTime }
+          : { start: currentTime },
+    };
+    const saved = saveSkipSegmentsConfig(
+      currentSourceRef.current,
+      currentIdRef.current,
+      currentEpisodeIndexRef.current + 1,
+      nextConfig
+    );
+    if (!saved) return;
+    skipEpisodeConfigRef.current = saved;
+    setSkipEpisodeConfig(saved);
+    skipStateRef.current.introApplied = kind === 'intro';
+    setActiveSkipKind(null);
+  };
+
+  const handleClearSkipMarker = (kind: SkipSegmentKind) => {
+    if (!currentSourceRef.current || !currentIdRef.current) return;
+    const currentConfig = skipEpisodeConfigRef.current;
+    if (!currentConfig) return;
+
+    const nextConfig = { ...currentConfig };
+    delete nextConfig[kind];
+    if (!nextConfig.intro && !nextConfig.outro) {
+      clearSkipSegmentsConfig(
+        currentSourceRef.current,
+        currentIdRef.current,
+        currentEpisodeIndexRef.current + 1
+      );
+      skipEpisodeConfigRef.current = null;
+      setSkipEpisodeConfig(null);
+    } else {
+      const saved = saveSkipSegmentsConfig(
+        currentSourceRef.current,
+        currentIdRef.current,
+        currentEpisodeIndexRef.current + 1,
+        nextConfig
+      );
+      skipEpisodeConfigRef.current = saved;
+      setSkipEpisodeConfig(saved);
+    }
+    setActiveSkipKind(null);
+    setSkipSeconds(0);
+  };
+
+  const handleSkipSegmentsEnabledChange = (enabled: boolean) => {
+    skipSegmentsEnabledRef.current = enabled;
+    setSkipSegmentsEnabled(enabled);
+    if (!enabled) {
+      setActiveSkipKind(null);
+      setSkipSeconds(0);
+    }
+    try {
+      localStorage.setItem('skip_segments_enabled', String(enabled));
+    } catch {
+      // Keep the in-memory preference when browser storage is unavailable.
+    }
+  };
+
+  const handleAutoSkipChange = (kind: SkipSegmentKind, enabled: boolean) => {
+    if (kind === 'intro') {
+      autoSkipIntroRef.current = enabled;
+      setAutoSkipIntro(enabled);
+      try {
+        localStorage.setItem('skip_auto_intro', String(enabled));
+      } catch {
+        // Keep the in-memory preference when browser storage is unavailable.
+      }
+    } else {
+      autoSkipOutroRef.current = enabled;
+      setAutoSkipOutro(enabled);
+      try {
+        localStorage.setItem('skip_auto_outro', String(enabled));
+      } catch {
+        // Keep the in-memory preference when browser storage is unavailable.
+      }
+    }
+  };
+
+  const evaluateSkipSegments = () => {
+    const player = artPlayerRef.current;
+    if (!player) return;
+
+    if (!skipSegmentsEnabledRef.current) {
+      setActiveSkipKind(null);
+      setSkipSeconds(0);
+      return;
+    }
+
+    const current = player.currentTime || 0;
+    const duration = player.duration || 0;
+    const intro = getSkipRange('intro', duration);
+    const outro = getSkipRange('outro', duration);
+    const episodeCount = detailRef.current?.episodes?.length || 0;
+    const hasNextEpisode = currentEpisodeIndexRef.current < episodeCount - 1;
+
+    if (intro && current >= intro.start && current < intro.end) {
+      const remaining = Math.max(0, intro.end - current);
+      setSkipSeconds(remaining);
+      if (autoSkipIntroRef.current && !skipStateRef.current.introApplied) {
+        skipStateRef.current.introApplied = true;
+        player.currentTime = intro.end;
+        setActiveSkipKind(null);
+      } else {
+        setActiveSkipKind('intro');
+      }
+      return;
+    }
+
+    if (outro && current >= outro.start && current < outro.end) {
+      const remaining = Math.max(0, outro.end - current);
+      setSkipSeconds(remaining);
+      if (skipStateRef.current.outroApplied) {
+        setActiveSkipKind(null);
+        return;
+      }
+      if (autoSkipOutroRef.current) {
+        skipStateRef.current.outroApplied = true;
+        setActiveSkipKind(null);
+        if (hasNextEpisode) {
+          handleNextEpisode();
+        } else {
+          player.currentTime = Math.max(duration - 0.2, 0);
+        }
+      } else {
+        setActiveSkipKind('outro');
+      }
+      return;
+    }
+
+    setActiveSkipKind(null);
+    setSkipSeconds(0);
+  };
+
   // ---------------------------------------------------------------------------
   // 键盘快捷键
   // ---------------------------------------------------------------------------
@@ -1208,10 +1479,12 @@ function PlayPageClient() {
       // 监听视频可播放事件，这时恢复播放进度更可靠
       artPlayerRef.current.on('video:canplay', () => {
         // 若存在需要恢复的播放进度，则跳转
-        if (resumeTimeRef.current && resumeTimeRef.current > 0) {
+        const resumeTime = resumeTimeRef.current;
+        if (resumeTime !== null && resumeTime > 0) {
+          skipStateRef.current.introApplied = true;
           try {
             const duration = artPlayerRef.current.duration || 0;
-            let target = resumeTimeRef.current;
+            let target = resumeTime;
             if (duration && target >= duration - 2) {
               target = Math.max(0, duration - 5);
             }
@@ -1255,6 +1528,7 @@ function PlayPageClient() {
       });
 
       artPlayerRef.current.on('video:timeupdate', () => {
+        evaluateSkipSegments();
         const now = Date.now();
         let interval = 5000;
         if (process.env.NEXT_PUBLIC_STORAGE_TYPE === 'd1') {
@@ -1455,7 +1729,22 @@ function PlayPageClient() {
   }
 
   return (
-    <PageLayout activePath='/play'>
+    <PageLayout
+      activePath='/play'
+      skipSegmentControls={{
+        enabled: skipSegmentsEnabled,
+        autoIntro: autoSkipIntro,
+        autoOutro: autoSkipOutro,
+        introEnd: skipEpisodeConfig?.intro?.end,
+        outroStart: skipEpisodeConfig?.outro?.start,
+        episodeLabel: `${videoTitle} · 第 ${currentEpisodeIndex + 1} 集`,
+        getCurrentTime: () => artPlayerRef.current?.currentTime || 0,
+        onEnabledChange: handleSkipSegmentsEnabledChange,
+        onAutoChange: handleAutoSkipChange,
+        onSetMarker: handleSetSkipMarker,
+        onClearMarker: handleClearSkipMarker,
+      }}
+    >
       <div className='play-page cinema-enter relative flex flex-col gap-5 px-3 pb-24 pt-3 sm:px-6 lg:px-10 2xl:px-16'>
         <div className='pointer-events-none fixed inset-0 -z-10'>
           <PosterImage
@@ -1548,6 +1837,17 @@ function PlayPageClient() {
                 ></div>
 
                 {/* 换源加载蒙层 */}
+                {!isVideoLoading && skipSegmentsEnabled && (
+                  <SkipSegmentOverlay
+                    kind={activeSkipKind}
+                    seconds={skipSeconds}
+                    canNextEpisode={Boolean(
+                      detail?.episodes &&
+                        currentEpisodeIndex < detail.episodes.length - 1
+                    )}
+                    onSkip={handleSkipNow}
+                  />
+                )}
                 {isVideoLoading && (
                   <div className='absolute inset-0 z-[500] flex items-center justify-center rounded-[1.55rem] border border-white/10 bg-black/75 backdrop-blur-2xl transition-all duration-500'>
                     <div className='text-center max-w-md mx-auto px-6'>

@@ -63,6 +63,19 @@ async function fetchWithTimeout(
 /**
  * 获取豆瓣代理 URL 设置
  */
+/** Fetch a same-origin API with a client-side deadline so a blocked upstream cannot freeze the page. */
+async function fetchJsonWithTimeout(
+  url: string,
+  timeoutMs = 15000
+): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
 export function getDoubanProxyUrl(): string | null {
   if (typeof window === 'undefined') return null;
 
@@ -144,7 +157,7 @@ export async function getDoubanCategories(
   } else {
     // 使用服务端 API（当没有设置代理 URL 时）
     const { kind, category, type, pageLimit = 20, pageStart = 0 } = params;
-    const response = await fetch(
+    const response = await fetchJsonWithTimeout(
       `/api/douban/categories?kind=${kind}&category=${category}&type=${type}&limit=${pageLimit}&start=${pageStart}`
     );
 

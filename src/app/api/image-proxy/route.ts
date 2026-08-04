@@ -40,8 +40,12 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Invalid image URL' }, { status: 400 });
   }
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
+
   try {
     const imageResponse = await fetch(targetUrl, {
+      signal: controller.signal,
       redirect: 'follow',
       headers: {
         Accept: 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8',
@@ -89,5 +93,7 @@ export async function GET(request: Request) {
       { error: 'Error fetching image' },
       { status: 500 }
     );
+  } finally {
+    clearTimeout(timeoutId);
   }
 }

@@ -1,4 +1,4 @@
-﻿/* eslint-disable no-console,react-hooks/exhaustive-deps */
+/* eslint-disable no-console,react-hooks/exhaustive-deps */
 
 'use client';
 
@@ -18,6 +18,7 @@ function DoubanPageClient() {
   const searchParams = useSearchParams();
   const [doubanData, setDoubanData] = useState<DoubanItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -81,7 +82,8 @@ function DoubanPageClient() {
   }, [type]);
 
   // 生成骨架屏数据
-  const skeletonData = Array.from({ length: 25 }, (_, index) => index);
+  const pageLimit = 16;
+  const skeletonData = Array.from({ length: pageLimit }, (_, index) => index);
 
   // 生成API请求参数的辅助函数
   const getRequestParams = useCallback(
@@ -92,7 +94,7 @@ function DoubanPageClient() {
           kind: 'tv' as const,
           category: type,
           type: secondarySelection,
-          pageLimit: 25,
+          pageLimit,
           pageStart,
         };
       }
@@ -102,7 +104,7 @@ function DoubanPageClient() {
         kind: type as 'tv' | 'movie',
         category: primarySelection,
         type: secondarySelection,
-        pageLimit: 25,
+        pageLimit,
         pageStart,
       };
     },
@@ -113,17 +115,23 @@ function DoubanPageClient() {
   const loadInitialData = useCallback(async () => {
     try {
       setLoading(true);
+      setLoadError(null);
       const data = await getDoubanCategories(getRequestParams(0));
 
       if (data.code === 200) {
         setDoubanData(data.list);
-        setHasMore(data.list.length === 25);
+        setHasMore(data.list.length === pageLimit);
         setLoading(false);
       } else {
         throw new Error(data.message || '获取数据失败');
       }
     } catch (err) {
       console.error(err);
+      setDoubanData([]);
+      setHasMore(false);
+      setLoadError('豆瓣数据暂时无法加载，请稍后重试');
+    } finally {
+      setLoading(false);
     }
   }, [type, primarySelection, secondarySelection, getRequestParams]);
 
@@ -136,6 +144,7 @@ function DoubanPageClient() {
 
     // 重置页面状态
     setDoubanData([]);
+    setLoadError(null);
     setCurrentPage(0);
     setHasMore(true);
     setIsLoadingMore(false);
@@ -177,12 +186,14 @@ function DoubanPageClient() {
 
           if (data.code === 200) {
             setDoubanData((prev) => [...prev, ...data.list]);
-            setHasMore(data.list.length === 25);
+            setHasMore(data.list.length === pageLimit);
           } else {
             throw new Error(data.message || '获取数据失败');
           }
         } catch (err) {
           console.error(err);
+          setHasMore(false);
+          setLoadError('更多内容暂时无法加载');
         } finally {
           setIsLoadingMore(false);
         }
@@ -341,7 +352,24 @@ function DoubanPageClient() {
 
           {/* 空状态 */}
           {!loading && doubanData.length === 0 && (
-            <div className='text-center text-gray-500 py-8'>暂无相关内容</div>
+            <div className='glass-panel mx-auto flex max-w-xl flex-col items-center gap-4 rounded-[1.5rem] px-6 py-10 text-center'>
+              <p className='text-sm text-gray-500'>
+                {loadError || '暂无相关内容'}
+              </p>
+              {loadError && (
+                <button
+                  type='button'
+                  onClick={() => {
+                    setLoadError(null);
+                    setSelectorsReady(true);
+                    loadInitialData();
+                  }}
+                  className='glass-secondary-button px-4 py-2 text-sm'
+                >
+                  重新加载
+                </button>
+              )}
+            </div>
           )}
         </div>
       </div>
