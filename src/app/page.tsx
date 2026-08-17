@@ -192,7 +192,7 @@ function HomeClient() {
           ) : (
             // 首页视图
             <>
-              <div className='home-hero-bleed mb-12 sm:-mt-[7.25rem]'>
+              <div className='home-hero-bleed -mt-[9.5rem] mb-12 sm:-mt-[7.25rem]'>
                 <FeaturedHero items={hotMovies} loading={loading} />
               </div>
 

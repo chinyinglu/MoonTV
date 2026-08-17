@@ -13,16 +13,24 @@ import { ThemeToggle } from './ThemeToggle';
 
 interface MobileHeaderProps {
   showBackButton?: boolean;
+  immersive?: boolean;
   skipSegmentControls?: SkipSegmentSettingsControls;
 }
 
 const MobileHeader = ({
   showBackButton = false,
+  immersive = false,
   skipSegmentControls,
 }: MobileHeaderProps) => {
   const { siteName } = useSite();
   return (
-    <header className='glass-panel sticky top-0 z-[550] w-full rounded-none border-x-0 border-t-0 md:hidden'>
+    <header
+      className={`sticky top-0 z-[550] w-full md:hidden ${
+        immersive
+          ? 'mobile-immersive-header'
+          : 'glass-panel rounded-none border-x-0 border-t-0'
+      }`}
+    >
       <div className='flex h-14 items-center justify-between px-3'>
         <div className='flex items-center gap-1'>
           {showBackButton && <BackButton />}

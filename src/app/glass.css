@@ -272,6 +272,21 @@ html[data-sidebar-collapsed='true'] .desktop-back {
   transform: translateX(-50%);
 }
 
+.mobile-immersive-header {
+  border-bottom: 1px solid rgb(255 255 255 / 9%);
+  background: linear-gradient(180deg, rgb(4 5 5 / 58%), rgb(4 5 5 / 18%));
+  color: white;
+  backdrop-filter: blur(18px) saturate(125%);
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+}
+
+.mobile-immersive-header .ui-icon-button,
+.mobile-immersive-header .theme-toggle {
+  border-color: rgb(255 255 255 / 13%);
+  background: rgb(0 0 0 / 16%);
+  color: rgb(255 255 255 / 86%);
+}
+
 @media (min-width: 768px) {
   .home-hero-bleed {
     --home-sidebar-width: 230px;

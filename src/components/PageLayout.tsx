@@ -26,6 +26,7 @@ const PageLayout = ({
     <div className='app-shell relative min-h-screen w-full overflow-x-clip'>
       <MobileHeader
         showBackButton={showBackButton}
+        immersive={activePath === '/'}
         skipSegmentControls={skipSegmentControls}
       />
 
