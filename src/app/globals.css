@@ -204,6 +204,70 @@ textarea:focus-visible,
   color: var(--text);
 }
 
+.theme-toggle {
+  position: relative;
+  display: inline-grid;
+  width: 2.65rem;
+  height: 2.65rem;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  color: var(--text);
+  backdrop-filter: blur(18px) saturate(120%);
+  transition: transform 350ms var(--motion), border-color 250ms ease,
+    background 250ms ease, box-shadow 350ms ease;
+}
+
+.theme-toggle::before {
+  position: absolute;
+  width: 1.85rem;
+  height: 1.85rem;
+  border: 1px solid color-mix(in srgb, currentColor 13%, transparent);
+  border-radius: inherit;
+  content: '';
+  transition: transform 500ms var(--motion), opacity 300ms ease;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-2px) rotate(4deg);
+  border-color: var(--line-strong);
+  background: var(--surface-strong);
+  box-shadow: 0 10px 34px rgb(0 0 0 / 18%);
+}
+
+.theme-toggle:hover::before {
+  transform: scale(1.12);
+  opacity: 0.65;
+}
+
+.theme-toggle-orbit {
+  position: relative;
+  display: grid;
+  width: 1.1rem;
+  height: 1.1rem;
+  place-items: center;
+}
+
+.theme-toggle-glyph {
+  position: absolute;
+  width: 1.05rem;
+  height: 1.05rem;
+  stroke-width: 1.65;
+  transition: transform 520ms var(--motion), opacity 280ms ease;
+}
+
+.theme-toggle-glyph.is-visible {
+  transform: rotate(0deg) scale(1);
+  opacity: 1;
+}
+
+.theme-toggle-glyph.is-hidden {
+  transform: rotate(-75deg) scale(0.35);
+  opacity: 0;
+}
+
 .video-card-hover {
   transition: transform 420ms var(--motion);
 }

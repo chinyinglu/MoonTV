@@ -2,6 +2,7 @@
 
 import { ArrowLeft, ArrowRight, ChevronRight, Play } from 'lucide-react';
 import Link from 'next/link';
+import type { CSSProperties } from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { buildDetailUrl } from '@/lib/detail-url';
@@ -15,6 +16,20 @@ interface FeaturedHeroProps {
   loading?: boolean;
 }
 
+interface PosterPalette {
+  body?: string;
+  header?: string;
+  primaryLight?: string;
+  primaryDark?: string;
+  secondary?: string;
+  isDark?: boolean;
+}
+
+interface HeroMetadata {
+  intro: string;
+  palette?: PosterPalette;
+}
+
 export default function FeaturedHero({
   items = [],
   loading,
@@ -24,8 +39,9 @@ export default function FeaturedHero({
   const [direction, setDirection] = useState<1 | -1>(1);
   const [paused, setPaused] = useState(false);
   const touchStartRef = useRef<number | null>(null);
-  const synopsisCacheRef = useRef(new Map<string, string>());
+  const metadataCacheRef = useRef(new Map<string, HeroMetadata>());
   const [synopsis, setSynopsis] = useState('');
+  const [palette, setPalette] = useState<PosterPalette | undefined>();
   const item = featuredItems[activeIndex];
   const heroPoster = getHighResolutionImageUrl(item?.poster || '');
 
@@ -63,38 +79,51 @@ export default function FeaturedHero({
   useEffect(() => {
     if (!item?.id) {
       setSynopsis('');
+      setPalette(undefined);
       return;
     }
 
-    const cached = synopsisCacheRef.current.get(item.id);
+    const cached = metadataCacheRef.current.get(item.id);
     if (cached !== undefined) {
-      setSynopsis(cached);
+      setSynopsis(cached.intro);
+      setPalette(cached.palette);
       return;
     }
 
     const controller = new AbortController();
     setSynopsis('');
+    setPalette(undefined);
     fetch(`/api/douban/detail?id=${encodeURIComponent(item.id)}`, {
       signal: controller.signal,
     })
       .then((response) => {
         if (!response.ok) throw new Error('synopsis unavailable');
-        return response.json() as Promise<{ intro?: string }>;
+        return response.json() as Promise<{
+          intro?: string;
+          palette?: PosterPalette;
+        }>;
       })
       .then((data) => {
         const intro = data.intro?.trim() || '暂无剧情简介。';
-        synopsisCacheRef.current.set(item.id, intro);
+        metadataCacheRef.current.set(item.id, {
+          intro,
+          palette: data.palette,
+        });
         setSynopsis(intro);
+        setPalette(data.palette);
       })
       .catch((error: Error) => {
-        if (error.name !== 'AbortError') setSynopsis('暂无剧情简介。');
+        if (error.name !== 'AbortError') {
+          setSynopsis('暂无剧情简介。');
+          setPalette(undefined);
+        }
       });
 
     return () => controller.abort();
   }, [item?.id]);
   if (loading || !featuredItems.length) {
     return (
-      <div className='glass-panel relative min-h-[430px] overflow-hidden rounded-[2rem] sm:min-h-[580px]'>
+      <div className='relative min-h-[430px] overflow-hidden sm:min-h-[580px]'>
         <div className='skeleton-shimmer absolute inset-0' />
         <div className='absolute bottom-8 left-7 right-7'>
           <p className='ui-kicker'>Preparing today&apos;s selection</p>
@@ -122,10 +151,17 @@ export default function FeaturedHero({
     rate: item.rate,
     type: 'movie',
   });
+  const paletteStyle = {
+    '--hero-poster-deep': palette?.primaryDark || '#080a09',
+    '--hero-poster-mid': palette?.header || '#303634',
+    '--hero-poster-light': palette?.primaryLight || '#919b98',
+    '--hero-poster-soft': palette?.secondary || '#eef2f1',
+  } as CSSProperties;
 
   return (
     <section
-      className='hero-shell cinema-enter group relative min-h-[520px] overflow-hidden rounded-[2rem] bg-black sm:min-h-[650px] lg:min-h-[700px]'
+      className='hero-shell cinema-enter group relative min-h-[calc(100svh-2rem)] overflow-hidden bg-black sm:min-h-[max(900px,108svh)]'
+      style={paletteStyle}
       aria-label='今日精选'
       aria-roledescription='轮播图'
       tabIndex={0}
@@ -159,6 +195,21 @@ export default function FeaturedHero({
       }}
     >
       <div
+        key={`ambient-${item.id}`}
+        className='hero-ambient-layer absolute inset-0'
+      >
+        <PosterImage
+          src={heroPoster}
+          alt=''
+          fill
+          priority
+          sizes='100vw'
+          quality={80}
+          className='hero-ambient-artwork'
+          fallbackLabel=''
+        />
+      </div>
+      <div
         key={item.id}
         className={`hero-image-layer absolute inset-0 ${
           direction > 0 ? 'hero-slide-next' : 'hero-slide-prev'
@@ -171,7 +222,7 @@ export default function FeaturedHero({
           priority
           sizes='(max-width: 768px) 100vw, (max-width: 1536px) 92vw, 1480px'
           quality={95}
-          className='hero-artwork transition-transform duration-[2200ms] ease-out group-hover:scale-[1.018]'
+          className='hero-artwork transition-transform duration-[2200ms] ease-out group-hover:scale-[1.12]'
           fallbackLabel={item.title}
         />
       </div>
@@ -221,22 +272,22 @@ export default function FeaturedHero({
 
       {featuredItems.length > 1 && (
         <>
-          <div className='absolute right-5 top-5 z-30 hidden items-center gap-2 sm:flex'>
+          <div className='pointer-events-none absolute inset-0 z-30 hidden sm:block'>
             <button
               type='button'
               onClick={previous}
-              className='flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-black'
+              className='hero-nav-button hero-nav-prev pointer-events-auto'
               aria-label='上一部精选影片'
             >
-              <ArrowLeft className='h-4 w-4' />
+              <ArrowLeft className='h-5 w-5' />
             </button>
             <button
               type='button'
               onClick={next}
-              className='flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-black'
+              className='hero-nav-button hero-nav-next pointer-events-auto'
               aria-label='下一部精选影片'
             >
-              <ArrowRight className='h-4 w-4' />
+              <ArrowRight className='h-5 w-5' />
             </button>
           </div>
 

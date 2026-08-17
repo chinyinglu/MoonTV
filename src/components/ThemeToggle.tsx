@@ -2,7 +2,7 @@
 
 'use client';
 
-import { Moon, Sun } from 'lucide-react';
+import { MoonStar, SunMedium } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
@@ -49,14 +49,22 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className='ui-icon-button'
+      className='theme-toggle'
       aria-label='Toggle theme'
+      title={resolvedTheme === 'dark' ? '切换到白天模式' : '切换到夜间模式'}
     >
-      {resolvedTheme === 'dark' ? (
-        <Sun className='w-full h-full' />
-      ) : (
-        <Moon className='w-full h-full' />
-      )}
+      <span className='theme-toggle-orbit' aria-hidden='true'>
+        <SunMedium
+          className={`theme-toggle-glyph ${
+            resolvedTheme === 'dark' ? 'is-visible' : 'is-hidden'
+          }`}
+        />
+        <MoonStar
+          className={`theme-toggle-glyph ${
+            resolvedTheme === 'dark' ? 'is-hidden' : 'is-visible'
+          }`}
+        />
+      </span>
     </button>
   );
 }

@@ -142,7 +142,7 @@ function HomeClient() {
     <PageLayout>
       <div className='px-3 py-5 sm:px-8 sm:py-8 lg:px-10'>
         {/* 顶部 Tab 切换 */}
-        <div className='mb-8 flex justify-center sm:mb-10'>
+        <div className='relative z-30 mb-8 flex justify-center sm:mb-10'>
           <CapsuleSwitch
             options={[
               { label: '首页', value: 'home' },
@@ -192,7 +192,7 @@ function HomeClient() {
           ) : (
             // 首页视图
             <>
-              <div className='mb-12'>
+              <div className='home-hero-bleed mb-12 sm:-mt-[7.25rem]'>
                 <FeaturedHero items={hotMovies} loading={loading} />
               </div>
 

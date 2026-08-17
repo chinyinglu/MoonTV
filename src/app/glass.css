@@ -265,6 +265,26 @@ html[data-sidebar-collapsed='true'] .desktop-back {
   left: 92px;
 }
 
+.home-hero-bleed {
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  transform: translateX(-50%);
+}
+
+@media (min-width: 768px) {
+  .home-hero-bleed {
+    --home-sidebar-width: 230px;
+
+    width: calc(100vw - var(--home-sidebar-width));
+    transition: width 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  html[data-sidebar-collapsed='true'] .home-hero-bleed {
+    --home-sidebar-width: 76px;
+  }
+}
+
 .nav-liquid-highlight {
   pointer-events: none;
   z-index: 0;
@@ -327,56 +347,160 @@ html[data-sidebar-collapsed='true'] .desktop-back {
 
 .hero-shell {
   isolation: isolate;
-  border: 1px solid color-mix(in srgb, white 14%, transparent);
-  box-shadow: 0 40px 100px rgb(0 0 0 / 38%);
+  background: radial-gradient(
+      circle at 75% 28%,
+      color-mix(in srgb, var(--hero-poster-light, #8c9693) 34%, transparent),
+      transparent 40%
+    ),
+    var(--hero-poster-deep, #050606);
+}
+
+.hero-ambient-layer {
+  z-index: 0;
+  overflow: hidden;
+  background: var(--hero-poster-deep, #050606);
+}
+
+.hero-ambient-artwork {
+  object-fit: cover;
+  opacity: 0.82;
+  filter: blur(58px) saturate(1.42) contrast(1.05) brightness(0.7);
+  transform: scale(1.18);
 }
 
 .hero-image-layer {
+  z-index: 1;
   overflow: hidden;
-  background: #050606;
+  background: transparent;
 }
 
 .hero-artwork {
   object-fit: cover;
-  object-position: 50% 34%;
-  filter: saturate(0.92) contrast(1.04) brightness(0.94);
-  transform: scale(1.002);
+  object-position: 64% 38%;
+  filter: saturate(1.03) contrast(1.025);
+  transform: scale(1.09);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(0 0 0 / 88%) 8%,
+    black 16%,
+    black 94%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(0 0 0 / 88%) 8%,
+    black 16%,
+    black 94%,
+    transparent 100%
+  );
 }
 
 .hero-image-tone {
-  z-index: 1;
+  z-index: 2;
   background: radial-gradient(
       circle at 70% 28%,
       transparent 0 22%,
-      rgb(0 0 0 / 8%) 54%,
-      rgb(0 0 0 / 32%) 100%
+      color-mix(in srgb, var(--hero-poster-mid, #303634) 18%, transparent) 54%,
+      color-mix(in srgb, var(--hero-poster-deep, #000) 62%, transparent) 100%
     ),
     linear-gradient(
       90deg,
-      rgb(0 0 0 / 72%) 0%,
-      rgb(0 0 0 / 36%) 34%,
-      transparent 72%
+      color-mix(in srgb, var(--hero-poster-deep, #000) 94%, transparent) 0%,
+      color-mix(in srgb, var(--hero-poster-deep, #000) 68%, transparent) 36%,
+      transparent 58%
     );
 }
 
 .hero-image-vignette {
-  z-index: 2;
-  box-shadow: inset 0 0 110px rgb(0 0 0 / 34%),
-    inset 0 -90px 100px rgb(0 0 0 / 36%);
-}
-
-.hero-image-floor {
   z-index: 3;
   background: linear-gradient(
     180deg,
+    rgb(0 0 0 / 34%) 0%,
+    transparent 18% 72%,
+    rgb(0 0 0 / 16%) 100%
+  );
+  box-shadow: inset 0 0 130px
+      color-mix(in srgb, var(--hero-poster-deep, #000) 54%, transparent),
+    inset 0 -110px 120px color-mix(in srgb, var(--hero-poster-deep, #000) 72%, transparent);
+}
+
+.hero-image-floor {
+  z-index: 4;
+  background: linear-gradient(
+    180deg,
     transparent 0 45%,
-    rgb(0 0 0 / 18%) 62%,
-    rgb(0 0 0 / 92%) 100%
+    color-mix(in srgb, var(--hero-poster-deep, #000) 30%, transparent) 65%,
+    var(--page) 100%
   );
 }
 
+.hero-nav-button {
+  position: absolute;
+  top: 48%;
+  display: flex;
+  width: 3.25rem;
+  height: 3.25rem;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 999px;
+  background: rgb(5 7 7 / 28%);
+  color: rgb(255 255 255 / 82%);
+  opacity: 0.62;
+  box-shadow: 0 14px 40px rgb(0 0 0 / 18%);
+  backdrop-filter: blur(20px) saturate(130%);
+  transform: translateY(-50%);
+  transition: opacity 280ms ease, color 280ms ease, background 280ms ease,
+    border-color 280ms ease, transform 420ms var(--motion),
+    box-shadow 420ms var(--motion);
+}
+
+.hero-nav-button::before {
+  position: absolute;
+  inset: -0.45rem;
+  border: 1px solid rgb(255 255 255 / 7%);
+  border-radius: inherit;
+  content: '';
+  opacity: 0;
+  transform: scale(0.78);
+  transition: opacity 320ms ease, transform 420ms var(--motion);
+}
+
+.hero-nav-prev {
+  left: clamp(1rem, 2.4vw, 2.5rem);
+}
+
+.hero-nav-next {
+  right: clamp(1rem, 2.4vw, 2.5rem);
+}
+
+.hero-shell:hover .hero-nav-button,
+.hero-nav-button:focus-visible {
+  opacity: 0.92;
+}
+
+.hero-nav-button:hover {
+  border-color: rgb(255 255 255 / 52%);
+  background: rgb(255 255 255 / 92%);
+  color: #090a0a;
+  box-shadow: 0 18px 48px rgb(0 0 0 / 28%);
+  transform: translateY(-50%) scale(1.06);
+}
+
+.hero-nav-button:hover::before,
+.hero-nav-button:focus-visible::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.hero-nav-button:active {
+  transform: translateY(-50%) scale(0.96);
+}
+
 .hero-grain {
-  z-index: 4;
+  z-index: 5;
   opacity: 0.16;
   background-image: radial-gradient(
     circle,
@@ -389,21 +513,36 @@ html[data-sidebar-collapsed='true'] .desktop-back {
 
 @media (max-width: 767px) {
   .hero-shell {
-    min-height: min(76svh, 720px);
-    border-radius: 1.5rem;
+    min-height: min(90svh, 860px);
   }
 
   .hero-artwork {
-    object-position: 50% 24%;
+    object-fit: cover;
+    object-position: 50% 22%;
+    transform: scale(1.07);
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      black 0%,
+      black 58%,
+      rgb(0 0 0 / 74%) 72%,
+      transparent 94%
+    );
+    mask-image: linear-gradient(
+      180deg,
+      black 0%,
+      black 58%,
+      rgb(0 0 0 / 74%) 72%,
+      transparent 94%
+    );
   }
 
   .hero-image-tone {
     background: linear-gradient(
       180deg,
-      rgb(0 0 0 / 4%) 0%,
-      rgb(0 0 0 / 12%) 36%,
-      rgb(0 0 0 / 82%) 78%,
-      rgb(0 0 0 / 98%) 100%
+      color-mix(in srgb, var(--hero-poster-deep, #000) 8%, transparent) 0%,
+      color-mix(in srgb, var(--hero-poster-deep, #000) 22%, transparent) 38%,
+      color-mix(in srgb, var(--hero-poster-deep, #000) 88%, transparent) 78%,
+      color-mix(in srgb, var(--hero-poster-deep, #000) 98%, black) 100%
     );
   }
 
@@ -417,7 +556,195 @@ html[data-sidebar-collapsed='true'] .desktop-back {
   }
 
   .hero-image-vignette {
-    box-shadow: inset 0 0 64px rgb(0 0 0 / 28%);
+    box-shadow: inset 0 0 72px
+      color-mix(in srgb, var(--hero-poster-deep, #000) 48%, transparent);
+  }
+}
+
+.detail-page {
+  background: var(--page);
+}
+
+.detail-page-ambient {
+  overflow: hidden;
+  background: var(--detail-deep, var(--page-deep));
+}
+
+.detail-page-ambient-image {
+  object-fit: cover;
+  opacity: 0.58;
+  filter: blur(70px) saturate(1.38) brightness(0.64);
+  transform: scale(1.2);
+}
+
+.detail-page-ambient-wash {
+  background: radial-gradient(
+      circle at 20% 14%,
+      color-mix(in srgb, var(--detail-light, #9ca7a3) 26%, transparent),
+      transparent 38%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--detail-deep, #111) 24%, transparent),
+      var(--page) 88%
+    );
+  backdrop-filter: blur(28px) saturate(125%);
+  -webkit-backdrop-filter: blur(28px) saturate(125%);
+}
+
+.detail-hero {
+  isolation: isolate;
+  background: var(--detail-deep, #151817);
+}
+
+.detail-hero-ambient {
+  z-index: 0;
+  overflow: hidden;
+  background: var(--detail-deep, #151817);
+}
+
+.detail-hero-ambient-image {
+  object-fit: cover;
+  opacity: 0.76;
+  filter: blur(62px) saturate(1.45) contrast(1.04) brightness(0.68);
+  transform: scale(1.18);
+}
+
+.detail-hero-focus {
+  z-index: 1;
+}
+
+.detail-hero-artwork {
+  object-fit: cover;
+  object-position: 34% 42%;
+  filter: saturate(1.03) contrast(1.025);
+  transform: scale(1.035);
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    black 0%,
+    black 45%,
+    rgb(0 0 0 / 92%) 56%,
+    transparent 70%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    black 0%,
+    black 45%,
+    rgb(0 0 0 / 92%) 56%,
+    transparent 70%
+  );
+}
+
+.detail-hero-tone {
+  z-index: 2;
+  background: radial-gradient(
+      circle at 22% 34%,
+      transparent 0 24%,
+      color-mix(in srgb, var(--detail-mid, #4f5956) 16%, transparent) 52%,
+      transparent 72%
+    ),
+    linear-gradient(
+      90deg,
+      transparent 0 50%,
+      color-mix(in srgb, var(--detail-deep, #111) 48%, transparent) 60%,
+      color-mix(in srgb, var(--detail-deep, #111) 94%, black) 82% 100%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--detail-deep, #111) 8%, transparent),
+      transparent 42%,
+      color-mix(in srgb, var(--detail-deep, #111) 64%, black) 100%
+    );
+}
+
+.detail-hero-vignette {
+  z-index: 3;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--detail-deep, #000) 18%, transparent),
+    transparent 22% 68%,
+    color-mix(in srgb, var(--detail-deep, #000) 46%, transparent) 84%,
+    var(--page) 100%
+  );
+}
+
+.detail-copy {
+  text-shadow: 0 2px 28px rgb(0 0 0 / 48%);
+}
+
+.detail-chip {
+  display: inline-flex;
+  min-height: 2rem;
+  align-items: center;
+  gap: 0.42rem;
+  border: 1px solid rgb(255 255 255 / 17%);
+  border-radius: 999px;
+  background: rgb(0 0 0 / 17%);
+  padding: 0.42rem 0.78rem;
+  color: rgb(255 255 255 / 74%);
+  backdrop-filter: blur(18px) saturate(130%);
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
+}
+
+.detail-info-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  border-top: 1px solid rgb(255 255 255 / 16%);
+  padding-top: 0.85rem;
+}
+
+.detail-people,
+.detail-related,
+.detail-gallery {
+  scrollbar-width: none;
+}
+
+.detail-people::-webkit-scrollbar,
+.detail-related::-webkit-scrollbar,
+.detail-gallery::-webkit-scrollbar {
+  display: none;
+}
+
+.person-card,
+.related-card {
+  transition: transform 520ms var(--motion), filter 420ms ease;
+}
+
+.person-card:hover,
+.related-card:hover {
+  transform: translateY(-5px);
+  filter: brightness(1.05);
+}
+
+@media (max-width: 1023px) {
+  .detail-hero-artwork {
+    object-position: 50% 22%;
+    transform: scale(1.035);
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      black 0%,
+      black 50%,
+      rgb(0 0 0 / 74%) 65%,
+      transparent 88%
+    );
+    mask-image: linear-gradient(
+      180deg,
+      black 0%,
+      black 50%,
+      rgb(0 0 0 / 74%) 65%,
+      transparent 88%
+    );
+  }
+
+  .detail-hero-tone {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--detail-deep, #111) 8%, transparent) 0%,
+      color-mix(in srgb, var(--detail-deep, #111) 20%, transparent) 42%,
+      color-mix(in srgb, var(--detail-deep, #111) 88%, transparent) 72%,
+      color-mix(in srgb, var(--detail-deep, #111) 98%, black) 100%
+    );
   }
 }
 
