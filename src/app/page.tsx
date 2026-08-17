@@ -138,62 +138,71 @@ function HomeClient() {
     localStorage.setItem('hasSeenAnnouncement', announcement); // 记录已查看弹窗
   };
 
+  const tabSwitcher = (
+    <CapsuleSwitch
+      options={[
+        { label: '首页', value: 'home' },
+        { label: '收藏夹', value: 'favorites' },
+      ]}
+      active={activeTab}
+      onChange={(value) => setActiveTab(value as 'home' | 'favorites')}
+    />
+  );
+
   return (
     <PageLayout>
-      <div className='px-3 py-5 sm:px-8 sm:py-8 lg:px-10'>
-        {/* 顶部 Tab 切换 */}
-        <div className='relative z-30 mb-8 flex justify-center sm:mb-10'>
-          <CapsuleSwitch
-            options={[
-              { label: '首页', value: 'home' },
-              { label: '收藏夹', value: 'favorites' },
-            ]}
-            active={activeTab}
-            onChange={(value) => setActiveTab(value as 'home' | 'favorites')}
-          />
-        </div>
-
+      <div className='px-3 pb-5 pt-0 sm:px-8 sm:pb-8 lg:px-10'>
         <div className='mx-auto max-w-[1480px]'>
           {activeTab === 'favorites' ? (
             // 收藏夹视图
-            <section className='cinema-enter cinema-delay-1 mb-8'>
-              <div className='mb-4 flex items-center justify-between'>
-                <h2 className='ui-heading text-xl sm:text-2xl'>我的收藏</h2>
-                {favoriteItems.length > 0 && (
-                  <button
-                    className='text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-                    onClick={async () => {
-                      await clearAllFavorites();
-                      setFavoriteItems([]);
-                    }}
-                  >
-                    清空
-                  </button>
-                )}
+            <>
+              <div className='mb-8 flex justify-center pt-5 sm:mb-10 sm:pt-8'>
+                {tabSwitcher}
               </div>
-              <div className='justify-start grid grid-cols-3 gap-x-2 gap-y-14 sm:gap-y-20 px-0 sm:px-2 sm:grid-cols-[repeat(auto-fill,_minmax(11rem,_1fr))] sm:gap-x-8'>
-                {favoriteItems.map((item) => (
-                  <div key={item.id + item.source} className='w-full'>
-                    <VideoCard
-                      query={item.search_title}
-                      {...item}
-                      from='favorite'
-                      type={item.episodes > 1 ? 'tv' : ''}
-                    />
-                  </div>
-                ))}
-                {favoriteItems.length === 0 && (
-                  <div className='col-span-full text-center text-gray-500 py-8 dark:text-gray-400'>
-                    暂无收藏内容
-                  </div>
-                )}
-              </div>
-            </section>
+              <section className='cinema-enter cinema-delay-1 mb-8'>
+                <div className='mb-4 flex items-center justify-between'>
+                  <h2 className='ui-heading text-xl sm:text-2xl'>我的收藏</h2>
+                  {favoriteItems.length > 0 && (
+                    <button
+                      className='text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+                      onClick={async () => {
+                        await clearAllFavorites();
+                        setFavoriteItems([]);
+                      }}
+                    >
+                      清空
+                    </button>
+                  )}
+                </div>
+                <div className='justify-start grid grid-cols-3 gap-x-2 gap-y-14 sm:gap-y-20 px-0 sm:px-2 sm:grid-cols-[repeat(auto-fill,_minmax(11rem,_1fr))] sm:gap-x-8'>
+                  {favoriteItems.map((item) => (
+                    <div key={item.id + item.source} className='w-full'>
+                      <VideoCard
+                        query={item.search_title}
+                        {...item}
+                        from='favorite'
+                        type={item.episodes > 1 ? 'tv' : ''}
+                      />
+                    </div>
+                  ))}
+                  {favoriteItems.length === 0 && (
+                    <div className='col-span-full text-center text-gray-500 py-8 dark:text-gray-400'>
+                      暂无收藏内容
+                    </div>
+                  )}
+                </div>
+              </section>
+            </>
           ) : (
             // 首页视图
             <>
-              <div className='home-hero-bleed -mt-[9.5rem] mb-12 sm:-mt-[7.25rem]'>
-                <FeaturedHero items={hotMovies} loading={loading} />
+              <div className='relative'>
+                <div className='pointer-events-auto absolute inset-x-0 top-5 z-30 flex justify-center sm:top-8'>
+                  {tabSwitcher}
+                </div>
+                <div className='home-hero-bleed mb-12'>
+                  <FeaturedHero items={hotMovies} loading={loading} />
+                </div>
               </div>
 
               {/* 继续观看 */}
